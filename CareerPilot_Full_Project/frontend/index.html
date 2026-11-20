@@ -1,0 +1,2505 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CareerPilot</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    margin: 0;
+    background: #f5f7fb;
+    color: #172033;
+}
+
+header {
+    background: #111827;
+    color: #fff;
+    padding: 30px 7%;
+}
+
+header h1 {
+    margin: 0 0 6px;
+}
+
+main {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 0 20px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tab,
+button {
+    padding: 11px 16px;
+    border: 0;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.tab {
+    background: #e5e7eb;
+}
+
+.tab.active,
+.primary {
+    background: #2563eb;
+    color: white;
+}
+
+.secondary {
+    background: #e5e7eb;
+    color: #172033;
+}
+
+.danger {
+    background: #dc2626;
+    color: white;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 15px;
+    margin: 18px 0;
+    box-shadow: 0 3px 15px #0001;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 11px;
+    margin: 7px 0 14px;
+    border: 1px solid #ccd3dd;
+    border-radius: 8px;
+    font: inherit;
+}
+
+textarea {
+    min-height: 150px;
+}
+
+.hidden {
+    display: none;
+}
+
+.muted {
+    color: #64748b;
+}
+
+.loading {
+    padding: 15px;
+    background: #eff6ff;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.error {
+    padding: 15px;
+    background: #fef2f2;
+    color: #991b1b;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.success {
+    padding: 15px;
+    background: #ecfdf5;
+    color: #065f46;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 14px;
+}
+
+.metric {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.metric b {
+    font-size: 28px;
+    display: block;
+    margin-top: 5px;
+}
+
+.tag {
+    display: inline-block;
+    background: #e0f2fe;
+    padding: 6px 9px;
+    border-radius: 999px;
+    margin: 4px;
+    font-size: 13px;
+}
+
+.tag.good {
+    background: #dcfce7;
+}
+
+.tag.warn {
+    background: #fef3c7;
+}
+
+.tag.bad {
+    background: #fee2e2;
+}
+
+.role-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px;
+    margin: 14px 0;
+}
+
+.score {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.list {
+    margin: 8px 0 0;
+    padding-left: 20px;
+}
+
+.section-title {
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+.answer-box {
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 10px;
+    white-space: pre-wrap;
+}
+
+.small {
+    font-size: 13px;
+}
+
+/* =========================
+   VOICE INTERVIEW
+   ========================= */
+
+.recording-panel {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.recording-status {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.recording-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: #94a3b8;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.recording-dot.active {
+    background: #ef4444;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.4;
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.timer {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.recording-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.audio-preview {
+    width: 100%;
+    margin-top: 15px;
+}
+
+.interview-question {
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    padding: 18px;
+    border-radius: 10px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+/* Virtual interview: turn-based, automatic voice activity detection */
+.virtual-layout { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(280px,0.8fr); gap:18px; align-items:start; }
+.virtual-stage { background:#0b1220; color:#fff; border-radius:18px; overflow:hidden; min-height:340px; position:relative; }
+.virtual-stage video { width:100%; height:100%; min-height:340px; max-height:580px; object-fit:cover; display:block; background:#111827; }
+.virtual-stage.no-camera { display:flex; align-items:center; justify-content:center; text-align:center; padding:28px; }
+.virtual-avatar { font-size:56px; }
+.virtual-question { background:#eff6ff; color:#172033; border-radius:14px; padding:18px; margin-top:14px; line-height:1.55; font-size:18px; }
+.virtual-pill { display:inline-flex; align-items:center; gap:8px; border-radius:999px; background:#e2e8f0; color:#172033; padding:8px 12px; font-size:13px; font-weight:700; }
+.virtual-pill.live { background:#fee2e2; color:#991b1b; }
+.virtual-toggle { display:flex; align-items:center; gap:10px; margin:12px 0; }
+.virtual-toggle input { width:auto; margin:0; }
+.virtual-log { max-height:260px; overflow:auto; display:flex; flex-direction:column; gap:10px; }
+.virtual-turn { padding:12px; border-radius:10px; background:#f8fafc; border:1px solid #e2e8f0; }
+.virtual-turn .small { color:#64748b; }
+@media(max-width:760px){ .virtual-layout{grid-template-columns:1fr;} .virtual-stage,.virtual-stage video{min-height:260px;} }
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🚀 CareerPilot</h1>
+    <p>Adaptive AI Career Agent · Resume matching · Voice interview coaching</p>
+</header>
+
+<main>
+
+<!-- =========================
+     TABS
+========================= -->
+
+<div class="tabs">
+
+    <button
+        class="tab active"
+        onclick="tab('job', this)"
+    >
+        Job Assistant
+    </button>
+
+    <button
+        class="tab"
+        onclick="tab('roles', this)"
+    >
+        Job Roles
+    </button>
+
+    <button
+        class="tab"
+        onclick="tab('interview', this)"
+    >
+        Interview Coach
+    </button>
+
+    <button
+        class="tab"
+        onclick="tab('virtualInterview', this)"
+    >
+        🎧 Virtual Interview
+    </button>
+
+</div>
+
+
+<!-- =========================
+     JOB ASSISTANT
+========================= -->
+
+<section id="job">
+
+    <div class="card">
+
+        <h2>Resume + Job Match</h2>
+
+        <input
+            id="resume"
+            type="file"
+            accept=".pdf"
+        >
+
+        <textarea
+            id="jd"
+            placeholder="Paste job description..."
+        ></textarea>
+
+        <button
+            class="primary"
+            onclick="analyze()"
+        >
+            Analyze Match
+        </button>
+
+        <div
+            id="analysis"
+            class="hidden"
+        ></div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>Application Materials</h2>
+
+        <button
+            class="primary"
+            onclick="application()"
+        >
+            Generate Application
+        </button>
+
+        <div
+            id="application"
+            class="hidden"
+        ></div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     JOB ROLES
+========================= -->
+
+<section
+    id="roles"
+    class="hidden"
+>
+
+    <div class="card">
+
+        <h2>Suitable Job Roles</h2>
+
+        <input
+            id="rolesResume"
+            type="file"
+            accept=".pdf"
+        >
+
+        <button
+            class="primary"
+            onclick="roles()"
+        >
+            Find Roles
+        </button>
+
+        <div
+            id="rolesResult"
+            class="hidden"
+        ></div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     INTERVIEW
+========================= -->
+
+<section
+    id="interview"
+    class="hidden"
+>
+
+    <!-- Interview Setup -->
+
+    <div class="card">
+
+        <h2>🎯 Interview Setup</h2>
+
+        <label>
+            Target Role
+        </label>
+
+        <input
+            id="role"
+            value="Data Analyst"
+            placeholder="Example: Data Analyst"
+        >
+
+        <label>
+            Interview Type
+        </label>
+
+        <select id="itype">
+
+            <option>
+                Technical + HR
+            </option>
+
+            <option>
+                Technical
+            </option>
+
+            <option>
+                HR
+            </option>
+
+            <option>
+                Project
+            </option>
+
+        </select>
+
+        <button
+            class="primary"
+            onclick="questions()"
+        >
+            Generate Interview
+        </button>
+
+        <div
+            id="questions"
+            class="hidden"
+        ></div>
+
+    </div>
+
+
+    <!-- =========================
+         TEXT PRACTICE
+    ========================= -->
+
+    <div class="card">
+
+        <h2>⌨️ Text Practice</h2>
+
+        <input
+            id="q"
+            placeholder="Interview question"
+        >
+
+        <textarea
+            id="a"
+            placeholder="Type your answer"
+        ></textarea>
+
+        <button
+            class="primary"
+            onclick="evaluate()"
+        >
+            Evaluate Answer
+        </button>
+
+        <div
+            id="evaluation"
+            class="hidden"
+        ></div>
+
+    </div>
+
+
+    <!-- =========================
+         VOICE INTERVIEW
+    ========================= -->
+
+    <div class="card">
+
+        <h2>🎤 Voice Interview</h2>
+
+        <p class="muted">
+            Record your spoken interview answer.
+            CareerPilot will transcribe your answer,
+            analyze speech patterns, and generate an interview report.
+        </p>
+
+
+        <!-- Current Question -->
+
+        <div class="interview-question">
+
+            <strong>
+                Interview Question
+            </strong>
+
+            <p id="voiceQuestion">
+                Tell me about yourself and your background.
+            </p>
+
+        </div>
+
+
+        <!-- Recording -->
+
+        <div class="recording-panel">
+
+            <div class="recording-status">
+
+                <span
+                    id="recordingDot"
+                    class="recording-dot"
+                ></span>
+
+                <span id="recordingStatus">
+                    Ready to record
+                </span>
+
+            </div>
+
+
+            <div
+                id="timer"
+                class="timer"
+            >
+                00:00
+            </div>
+
+
+            <div class="recording-controls">
+
+                <button
+                    id="startButton"
+                    class="primary"
+                    onclick="startRecording()"
+                >
+                    🎤 Start Answer
+                </button>
+
+
+                <button
+                    id="stopButton"
+                    class="danger"
+                    onclick="stopRecording()"
+                    disabled
+                >
+                    ⏹ Stop Answer
+                </button>
+
+
+                <button
+                    id="uploadButton"
+                    class="secondary"
+                    onclick="uploadRecording()"
+                    disabled
+                >
+                    📊 Analyze Recording
+                </button>
+
+                <button
+                    id="evaluateButton"
+                    class="primary"
+                    onclick="evaluateRecording(el('voiceQuestion').textContent)"
+                    disabled
+                >
+                    🧠 Evaluate Interview Answer
+                </button>
+
+            </div>
+
+
+            <!-- Audio preview -->
+
+            <audio
+                id="audioPreview"
+                class="audio-preview"
+                controls
+                hidden
+            ></audio>
+
+
+            <div class="card">
+                <h3>📷 Optional Camera Observation</h3>
+                <p class="muted">Only visible face presence and approximate head orientation are reported. Camera use is optional. Frames are processed by the backend and are not saved by this prototype.</p>
+                <video id="cameraPreview" autoplay muted playsinline style="width:100%;max-width:480px;border-radius:12px;background:#111827" hidden></video>
+                <div class="recording-controls">
+                    <button class="secondary" id="cameraStartButton" onclick="startCameraObservation()">Enable Camera Observation</button>
+                    <button class="secondary" id="cameraStopButton" onclick="stopCameraObservation()" disabled>Stop Camera</button>
+                </div>
+                <div id="visionResult" class="muted" aria-live="polite">Camera is off.</div>
+            </div>
+
+            <!-- Result -->
+
+            <div
+                id="audioResult"
+                class="hidden"
+            ></div>
+
+            <div
+                id="interviewReport"
+                class="hidden"
+            ></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     VIRTUAL INTERVIEW
+========================= -->
+<section id="virtualInterview" class="hidden">
+    <div class="card">
+        <h2>🎙️ Virtual Interview Room</h2>
+        <p class="muted">A voice-led mock interview: CareerPilot asks a question aloud, starts listening automatically, detects the end of your answer after a pause, evaluates it, and asks a relevant follow-up. This is turn-based voice interaction, not a continuous full-duplex Gemini Live connection.</p>
+        <div class="grid">
+            <div>
+                <label for="virtualRole">Target role</label>
+                <input id="virtualRole" value="Data Analyst" placeholder="e.g. Data Analyst">
+            </div>
+            <div>
+                <label for="virtualType">Interview type</label>
+                <select id="virtualType">
+                    <option>Technical + HR</option><option>Technical</option><option>HR</option><option>Project</option>
+                </select>
+            </div>
+        </div>
+        <label class="virtual-toggle"><input type="checkbox" id="virtualCameraToggle" onchange="virtualCameraToggleChanged()"> Enable full video camera during the virtual interview</label>
+        <p class="small muted">Camera is optional. When enabled, your live preview is shown in this room. The browser will ask permission. Camera frames are not needed for voice answers.</p>
+        <div class="recording-controls">
+            <button class="primary" id="virtualStartButton" onclick="startVirtualInterview()">▶ Start Virtual Interview</button>
+            <button class="danger" id="virtualStopButton" onclick="stopVirtualInterview()" disabled>■ End Interview</button>
+        </div>
+        <div id="virtualStatus" class="loading" aria-live="polite">Ready. Select your options, then start the interview.</div>
+    </div>
+
+    <div class="card virtual-layout">
+        <div>
+            <div id="virtualStage" class="virtual-stage no-camera">
+                <div id="virtualCameraPlaceholder"><div class="virtual-avatar">🎤</div><h3>Virtual interview room</h3><p class="muted">Turn on the camera toggle above if you want a full video preview.</p></div>
+                <video id="virtualVideo" autoplay muted playsinline hidden></video>
+            </div>
+            <div class="virtual-question"><div class="small muted">CURRENT QUESTION</div><strong id="virtualQuestion">Your first question will appear here.</strong></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center">
+                <span id="virtualListeningPill" class="virtual-pill">● Waiting to start</span>
+                <span id="virtualTurnCount" class="virtual-pill">Turn 0</span>
+            </div>
+        </div>
+        <div>
+            <h3>Conversation & feedback</h3>
+            <p class="muted small">Answers are recorded in the browser. Supported browsers provide a live transcript for faster evaluation; backend transcription remains the fallback.</p>
+            <div id="virtualConversation" class="virtual-log"><div class="virtual-turn muted">Your conversation will appear here.</div></div>
+            <div id="virtualFeedback" class="section-title"></div>
+        </div>
+    </div>
+</section>
+
+<section id="history" class="card">
+    <h2>📈 Recent Interview History</h2>
+    <p class="muted">History is stored only in this browser on this device.</p>
+    <button class="secondary" onclick="renderHistory()">Refresh History</button>
+    <button class="secondary" onclick="clearHistory()">Clear History</button>
+    <div id="historyList"></div>
+</section>
+
+</main>
+
+
+<script>
+
+/* =====================================================
+   BASIC SETTINGS
+===================================================== */
+
+const API = "http://localhost:8000";
+
+
+/* =====================================================
+   TAB SYSTEM
+===================================================== */
+
+function tab(id, button) {
+
+    document
+        .querySelectorAll("main section")
+        .forEach(section => {
+            section.classList.add("hidden");
+        });
+
+    document
+        .getElementById(id)
+        .classList.remove("hidden");
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(tabButton => {
+            tabButton.classList.remove("active");
+        });
+
+    button.classList.add("active");
+}
+
+
+/* =====================================================
+   HELPER FUNCTIONS
+===================================================== */
+
+function el(id) {
+    return document.getElementById(id);
+}
+
+
+function loading(id, message = "CareerPilot is thinking...") {
+
+    const element = el(id);
+
+    element.className = "loading";
+
+    element.textContent = "⏳ " + message;
+}
+
+
+function error(id, message) {
+
+    const element = el(id);
+
+    element.className = "error";
+
+    element.textContent = "⚠️ " + message;
+}
+
+
+function success(id, message) {
+
+    const element = el(id);
+
+    element.className = "success";
+
+    element.textContent = "✅ " + message;
+}
+
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(
+            /[&<>'"]/g,
+            character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[character])
+        );
+}
+
+
+function tags(array, className = "") {
+
+    return (array || [])
+        .map(
+            item =>
+                `<span class="tag ${className}">
+                    ${escapeHtml(item)}
+                </span>`
+        )
+        .join("");
+}
+
+
+function list(array) {
+
+    return `
+        <ul class="list">
+            ${(array || [])
+                .map(
+                    item =>
+                        `<li>${escapeHtml(item)}</li>`
+                )
+                .join("")}
+        </ul>
+    `;
+}
+
+
+/* =====================================================
+   PHASE 1 — JOB ASSISTANT
+===================================================== */
+
+function renderAnalysis(x) {
+
+    return `
+        <div class="card">
+
+            <div class="grid">
+
+                <div class="metric">
+                    Match score
+                    <b>${x.match_score}%</b>
+                </div>
+
+                <div class="metric">
+                    Target role
+                    <b>${escapeHtml(x.job_role)}</b>
+                </div>
+
+            </div>
+
+            <h3 class="section-title">
+                Candidate summary
+            </h3>
+
+            <p>
+                ${escapeHtml(x.candidate_summary)}
+            </p>
+
+            <h3 class="section-title">
+                Strong matches
+            </h3>
+
+            ${tags(x.strong_matches, "good")}
+
+            <h3 class="section-title">
+                Partial matches
+            </h3>
+
+            ${tags(x.partial_matches, "warn")}
+
+            <h3 class="section-title">
+                Missing skills
+            </h3>
+
+            ${tags(x.missing_skills, "bad")}
+
+            <h3 class="section-title">
+                Recommendations
+            </h3>
+
+            ${list(x.recommendations)}
+
+            <h3 class="section-title">
+                Why this score?
+            </h3>
+
+            ${list(x.reasoning)}
+
+        </div>
+    `;
+}
+
+
+function renderApplication(x) {
+
+    return `
+        <div class="card">
+
+            <h3>
+                Application description
+            </h3>
+
+            <div class="answer-box">
+                ${escapeHtml(x.application_description)}
+            </div>
+
+            <h3>
+                Why this role
+            </h3>
+
+            <div class="answer-box">
+                ${escapeHtml(x.why_this_role)}
+            </div>
+
+            <h3>
+                Cover letter
+            </h3>
+
+            <div class="answer-box">
+                ${escapeHtml(x.cover_letter)}
+            </div>
+
+            <h3>
+                Key points to highlight
+            </h3>
+
+            ${list(x.key_points_to_highlight)}
+
+        </div>
+    `;
+}
+
+
+function renderRoles(x) {
+
+    return `
+        <div class="card">
+
+            <h2>
+                Recommended Career Roles
+            </h2>
+
+            <p class="muted">
+                These recommendations are grounded
+                in the uploaded resume.
+            </p>
+
+            ${(x.roles || [])
+                .map(
+                    (role, index) => `
+                        <div class="role-card">
+
+                            <div class="score">
+                                ${index + 1}.
+                                ${escapeHtml(role.role)}
+                                —
+                                ${role.fit_score}%
+                                fit
+                            </div>
+
+                            <p>
+                                ${escapeHtml(role.why)}
+                            </p>
+
+                            <b>
+                                Skills to improve
+                            </b>
+
+                            ${list(role.skills_to_improve)}
+
+                        </div>
+                    `
+                )
+                .join("")}
+
+        </div>
+    `;
+}
+
+
+function renderQuestions(x) {
+
+    return `
+        <div class="card">
+
+            <h3>
+                ${escapeHtml(x.role)}
+                — Interview Plan
+            </h3>
+
+            ${(x.questions || [])
+                .map(
+                    (question, index) => `
+                        <div class="role-card">
+
+                            <b>
+                                Q${index + 1}.
+                                ${escapeHtml(question.question)}
+                            </b>
+
+                            <div class="small muted">
+                                ${escapeHtml(question.category)}
+                                ·
+                                ${escapeHtml(question.purpose)}
+                            </div>
+
+                        </div>
+                    `
+                )
+                .join("")}
+
+        </div>
+    `;
+}
+
+
+function renderEvaluation(x) {
+
+    return `
+        <div class="card">
+
+            <div class="grid">
+
+                <div class="metric">
+                    Overall
+                    <b>${x.overall_score}/100</b>
+                </div>
+
+                <div class="metric">
+                    Relevance
+                    <b>${x.relevance}/10</b>
+                </div>
+
+                <div class="metric">
+                    Technical
+                    <b>${x.technical_correctness}/10</b>
+                </div>
+
+                <div class="metric">
+                    Completeness
+                    <b>${x.completeness}/10</b>
+                </div>
+
+                <div class="metric">
+                    Structure
+                    <b>${x.structure}/10</b>
+                </div>
+
+                <div class="metric">
+                    Clarity
+                    <b>${x.clarity}/10</b>
+                </div>
+
+            </div>
+
+            <h3>
+                Strengths
+            </h3>
+
+            ${list(x.strengths)}
+
+            <h3>
+                Improvements
+            </h3>
+
+            ${list(x.improvements)}
+
+            <h3>
+                Better answer direction
+            </h3>
+
+            <div class="answer-box">
+                ${escapeHtml(x.better_answer_direction)}
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* =====================================================
+   API REQUEST HELPER
+===================================================== */
+
+async function send(
+    url,
+    formData,
+    outputId,
+    renderer
+) {
+
+    loading(outputId);
+
+    try {
+
+        const response = await fetch(
+            API + url,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.detail || "Request failed"
+            );
+        }
+
+        el(outputId).className = "";
+
+        el(outputId).innerHTML =
+            renderer(data);
+
+    } catch (errorObject) {
+
+        error(
+            outputId,
+            errorObject.message
+        );
+
+    }
+}
+
+
+/* =====================================================
+   JOB ASSISTANT FUNCTIONS
+===================================================== */
+
+function resume() {
+
+    return el("resume").files[0];
+}
+
+
+async function analyze() {
+
+    const file = resume();
+
+    const jobDescription =
+        el("jd").value;
+
+    if (!file || !jobDescription) {
+
+        alert(
+            "Upload resume and paste JD."
+        );
+
+        return;
+    }
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "resume",
+        file
+    );
+
+    formData.append(
+        "job_description",
+        jobDescription
+    );
+
+    send(
+        "/api/job/analyze",
+        formData,
+        "analysis",
+        renderAnalysis
+    );
+}
+
+
+async function application() {
+
+    const file = resume();
+
+    const jobDescription =
+        el("jd").value;
+
+    if (!file || !jobDescription) {
+
+        alert(
+            "Upload resume and paste JD first."
+        );
+
+        return;
+    }
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "resume",
+        file
+    );
+
+    formData.append(
+        "job_description",
+        jobDescription
+    );
+
+    send(
+        "/api/job/application",
+        formData,
+        "application",
+        renderApplication
+    );
+}
+
+
+async function roles() {
+
+    const file =
+        el("rolesResume").files[0];
+
+    if (!file) {
+
+        alert(
+            "Upload resume."
+        );
+
+        return;
+    }
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "resume",
+        file
+    );
+
+    send(
+        "/api/job/roles",
+        formData,
+        "rolesResult",
+        renderRoles
+    );
+}
+
+
+/* =====================================================
+   INTERVIEW FUNCTIONS
+===================================================== */
+
+async function questions() {
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "role",
+        el("role").value
+    );
+
+    formData.append(
+        "interview_type",
+        el("itype").value
+    );
+
+    send(
+        "/api/interview/questions",
+        formData,
+        "questions",
+        renderQuestions
+    );
+}
+
+
+async function evaluate() {
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "role",
+        el("role").value
+    );
+
+    formData.append(
+        "question",
+        el("q").value
+    );
+
+    formData.append(
+        "answer",
+        el("a").value
+    );
+
+    send(
+        "/api/interview/evaluate",
+        formData,
+        "evaluation",
+        renderEvaluation
+    );
+}
+
+
+/* =====================================================
+   PHASE 2 — MICROPHONE RECORDING
+===================================================== */
+
+let mediaRecorder = null;
+
+let audioChunks = [];
+
+let audioBlob = null;
+
+let recordingStartTime = null;
+
+let timerInterval = null;
+
+
+/* =====================================================
+   START RECORDING
+===================================================== */
+
+async function startRecording() {
+
+    try {
+
+        /*
+         * Ask the browser for microphone permission.
+         */
+
+        const stream =
+            await navigator.mediaDevices.getUserMedia(
+                {
+                    audio: true
+                }
+            );
+
+
+        /*
+         * Reset previous recording.
+         */
+
+        audioChunks = [];
+
+        audioBlob = null;
+
+
+        /*
+         * Create MediaRecorder.
+         */
+
+        mediaRecorder =
+            new MediaRecorder(stream);
+
+
+        /*
+         * Store audio chunks.
+         */
+
+        mediaRecorder.ondataavailable =
+            function(event) {
+
+                if (event.data.size > 0) {
+
+                    audioChunks.push(
+                        event.data
+                    );
+
+                }
+
+            };
+
+
+        /*
+         * When recording stops.
+         */
+
+        mediaRecorder.onstop =
+            function() {
+
+                audioBlob =
+                    new Blob(
+                        audioChunks,
+                        {
+                            type:
+                                mediaRecorder.mimeType ||
+                                "audio/webm"
+                        }
+                    );
+
+
+                /*
+                 * Create audio preview.
+                 */
+
+                const audioURL =
+                    URL.createObjectURL(
+                        audioBlob
+                    );
+
+                const audioPreview =
+                    el("audioPreview");
+
+                audioPreview.src =
+                    audioURL;
+
+                audioPreview.hidden =
+                    false;
+
+
+                /*
+                 * Enable upload button.
+                 */
+
+                el("uploadButton")
+                    .disabled = false;
+
+                el("evaluateButton")
+                    .disabled = false;
+
+
+                /*
+                 * Stop microphone.
+                 */
+
+                stream
+                    .getTracks()
+                    .forEach(
+                        track =>
+                            track.stop()
+                    );
+
+
+                setRecordingStatus(
+                    "Recording complete"
+                );
+
+            };
+
+
+        /*
+         * Start recording.
+         */
+
+        mediaRecorder.start();
+
+
+        /*
+         * Store start time.
+         */
+
+        recordingStartTime =
+            Date.now();
+
+
+        /*
+         * Start timer.
+         */
+
+        startTimer();
+
+
+        /*
+         * Update buttons.
+         */
+
+        el("startButton")
+            .disabled = true;
+
+        el("stopButton")
+            .disabled = false;
+
+        el("uploadButton")
+            .disabled = true;
+
+        el("evaluateButton")
+            .disabled = true;
+
+
+        /*
+         * Update visual status.
+         */
+
+        el("recordingDot")
+            .classList.add("active");
+
+        setRecordingStatus(
+            "Recording..."
+        );
+
+    } catch (errorObject) {
+
+        console.error(
+            errorObject
+        );
+
+        alert(
+            "Could not access microphone. " +
+            "Please allow microphone permission " +
+            "and try again."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   STOP RECORDING
+===================================================== */
+
+function stopRecording() {
+
+    if (
+        mediaRecorder &&
+        mediaRecorder.state !== "inactive"
+    ) {
+
+        mediaRecorder.stop();
+
+    }
+
+
+    /*
+     * Stop timer.
+     */
+
+    stopTimer();
+
+
+    /*
+     * Update buttons.
+     */
+
+    el("startButton")
+        .disabled = false;
+
+    el("stopButton")
+        .disabled = true;
+
+
+    /*
+     * Remove recording animation.
+     */
+
+    el("recordingDot")
+        .classList.remove("active");
+
+}
+
+
+/* =====================================================
+   RECORDING STATUS
+===================================================== */
+
+function setRecordingStatus(message) {
+
+    el("recordingStatus")
+        .textContent = message;
+
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function startTimer() {
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    timerInterval =
+        setInterval(
+            function() {
+
+                if (!recordingStartTime) {
+                    return;
+                }
+
+
+                const elapsed =
+                    Math.floor(
+                        (
+                            Date.now() -
+                            recordingStartTime
+                        ) / 1000
+                    );
+
+
+                const minutes =
+                    Math.floor(
+                        elapsed / 60
+                    );
+
+
+                const seconds =
+                    elapsed % 60;
+
+
+                el("timer")
+                    .textContent =
+                    String(minutes)
+                        .padStart(2, "0")
+                    + ":" +
+                    String(seconds)
+                        .padStart(2, "0");
+
+            },
+            1000
+        );
+
+}
+
+
+function stopTimer() {
+
+    clearInterval(
+        timerInterval
+    );
+
+    timerInterval = null;
+
+}
+
+
+/* =====================================================
+   UPLOAD RECORDING TO FASTAPI
+===================================================== */
+
+async function uploadRecording() {
+
+    if (!audioBlob) {
+
+        alert(
+            "Please record an answer first."
+        );
+
+        return;
+    }
+
+
+    const resultElement =
+        el("audioResult");
+
+
+    resultElement.className =
+        "loading";
+
+    resultElement.textContent =
+        "⏳ Analyzing recording...";
+
+
+    try {
+
+        const formData =
+            new FormData();
+
+
+        /*
+         * Send the recorded audio.
+         */
+
+        const extension =
+            audioBlob.type.includes("ogg") ? "ogg" : "webm";
+
+        formData.append(
+            "audio",
+            audioBlob,
+            "interview_answer." + extension
+        );
+
+
+        /*
+         * Send request to FastAPI.
+         */
+
+        const response =
+            await fetch(
+                API +
+                "/api/interview/audio/analyze",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "Audio analysis failed"
+            );
+
+        }
+
+
+        /*
+         * Display result.
+         */
+
+        resultElement.className =
+            "success";
+
+
+        const speech = data.speech_metrics || {};
+        const transcript = data.transcript || "";
+
+        resultElement.className = "";
+
+        resultElement.innerHTML = `
+            <div class="card">
+
+                <strong>
+                    ✅ Recording analyzed successfully
+                </strong>
+
+                <h3>Transcript</h3>
+
+                <div class="answer-box">
+                    ${escapeHtml(transcript)}
+                </div>
+
+                <h3 class="section-title">
+                    🎤 Speech Metrics
+                </h3>
+
+                <div class="grid">
+
+                    <div class="metric">
+                        Duration
+                        <b>${speech.duration_seconds ?? "N/A"} sec</b>
+                    </div>
+
+                    <div class="metric">
+                        Speaking Rate
+                        <b>${speech.speaking_rate_wpm ?? "N/A"} WPM</b>
+                    </div>
+
+                    <div class="metric">
+                        Filler Words
+                        <b>${speech.filler_word_count ?? "N/A"}</b>
+                    </div>
+
+                    <div class="metric">
+                        Average Pitch
+                        <b>${speech.average_pitch_hz ?? "N/A"} Hz</b>
+                    </div>
+
+                    <div class="metric">
+                        Pitch Variation
+                        <b>${speech.pitch_variation_hz ?? "N/A"} Hz</b>
+                    </div>
+
+                    <div class="metric">
+                        Average Energy
+                        <b>${speech.average_energy ?? "N/A"}</b>
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+
+    } catch (errorObject) {
+
+        console.error(
+            errorObject
+        );
+
+
+        resultElement.className =
+            "error";
+
+
+        resultElement.textContent =
+            "⚠️ " +
+            errorObject.message;
+
+    }
+
+}
+async function evaluateRecording(question) {
+    if (!audioBlob) {
+        alert("Please record an answer first.");
+        return;
+    }
+
+    if (!question) {
+        alert("Interview question is missing.");
+        return;
+    }
+
+    const formData = new FormData();
+
+    formData.append(
+        "audio",
+        audioBlob,
+        "interview_answer.webm"
+    );
+
+    formData.append(
+        "question",
+        question
+    );
+
+    try {
+        const response = await fetch(
+            API + "/api/interview/audio/evaluate",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.detail || "Evaluation failed."
+            );
+        }
+
+        console.log("Interview evaluation:", data);
+
+        displayInterviewReport(data);
+
+    } catch (error) {
+        console.error(
+            "Interview evaluation error:",
+            error
+        );
+
+        alert(
+            "Interview evaluation failed: " +
+            error.message
+        );
+    }
+}
+
+
+function displayInterviewReport(data) {
+
+    const report = el("interviewReport");
+
+    const evaluation = data.evaluation || {};
+    const speech = data.speech_metrics || {};
+    const transcript = data.transcript || "";
+
+    report.className = "";
+    saveInterviewHistory({
+        date: new Date().toISOString(),
+        role: el("role").value || "General interview",
+        question: el("voiceQuestion").textContent,
+        transcript,
+        overall_score: evaluation.overall_score ?? null,
+        duration_seconds: speech.duration_seconds ?? null,
+        speaking_rate_wpm: speech.speaking_rate_wpm ?? null,
+        filler_word_count: speech.filler_word_count ?? null
+    });
+
+    report.innerHTML = `
+        <div class="card">
+
+            <h2>📊 Interview Performance Report</h2>
+
+            <h3>Transcript</h3>
+
+            <div class="answer-box">
+                ${escapeHtml(transcript)}
+            </div>
+
+            <h3 class="section-title">
+                Overall Performance
+            </h3>
+
+            <div class="grid">
+
+                <div class="metric">
+                    Overall Score
+                    <b>${evaluation.overall_score ?? "N/A"}/100</b>
+                </div>
+
+                <div class="metric">
+                    Relevance
+                    <b>${evaluation.relevance ?? "N/A"}/10</b>
+                </div>
+
+                <div class="metric">
+                    Technical Correctness
+                    <b>${evaluation.technical_correctness ?? "N/A"}/10</b>
+                </div>
+
+                <div class="metric">
+                    Completeness
+                    <b>${evaluation.completeness ?? "N/A"}/10</b>
+                </div>
+
+                <div class="metric">
+                    Structure
+                    <b>${evaluation.structure ?? "N/A"}/10</b>
+                </div>
+
+                <div class="metric">
+                    Clarity
+                    <b>${evaluation.clarity ?? "N/A"}/10</b>
+                </div>
+
+            </div>
+
+            <h3 class="section-title">
+                🎤 Speech Analysis
+            </h3>
+
+            <div class="grid">
+
+                <div class="metric">
+                    Duration
+                    <b>${speech.duration_seconds ?? "N/A"} sec</b>
+                </div>
+
+                <div class="metric">
+                    Speaking Rate
+                    <b>${speech.speaking_rate_wpm ?? "N/A"} WPM</b>
+                </div>
+
+                <div class="metric">
+                    Filler Words
+                    <b>${speech.filler_word_count ?? "N/A"}</b>
+                </div>
+
+                <div class="metric">
+                    Average Pitch
+                    <b>${speech.average_pitch_hz ?? "N/A"} Hz</b>
+                </div>
+
+                <div class="metric">
+                    Pitch Variation
+                    <b>${speech.pitch_variation_hz ?? "N/A"} Hz</b>
+                </div>
+
+                <div class="metric">
+                    Average Energy
+                    <b>${speech.average_energy ?? "N/A"}</b>
+                </div>
+
+            </div>
+
+            <h3>Strengths</h3>
+            ${list(evaluation.strengths)}
+
+            <h3>Areas to Improve</h3>
+            ${list(evaluation.improvements)}
+
+            <h3>Better Answer Direction</h3>
+
+            <div class="answer-box">
+                ${escapeHtml(
+                    evaluation.better_answer_direction
+                )}
+            </div>
+
+        </div>
+    `;
+}
+
+
+let cameraStream = null;
+let visionTimer = null;
+let visionObservations = [];
+let visionBusy = false;
+
+async function startCameraObservation() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        error("visionResult", "Camera access is not supported by this browser/context. Use localhost or HTTPS.");
+        return;
+    }
+    try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+        const video = el("cameraPreview");
+        video.srcObject = cameraStream;
+        video.hidden = false;
+        el("cameraStartButton").disabled = true;
+        el("cameraStopButton").disabled = false;
+        visionObservations = [];
+        el("visionResult").textContent = "Camera enabled. Sampling an observation every 5 seconds…";
+        visionTimer = setInterval(captureVisionFrame, 5000);
+        captureVisionFrame();
+    } catch (e) {
+        error("visionResult", "Camera permission was denied or the camera is unavailable.");
+    }
+}
+
+function stopCameraObservation() {
+    if (visionTimer) clearInterval(visionTimer);
+    visionTimer = null;
+    if (cameraStream) cameraStream.getTracks().forEach(track => track.stop());
+    cameraStream = null;
+    const video = el("cameraPreview");
+    if (video) { video.srcObject = null; video.hidden = true; }
+    if (el("cameraStartButton")) el("cameraStartButton").disabled = false;
+    if (el("cameraStopButton")) el("cameraStopButton").disabled = true;
+    if (el("visionResult")) el("visionResult").textContent = visionObservations.length
+        ? `Camera stopped. ${visionObservations.length} observations collected; these describe visible cues only.`
+        : "Camera is off.";
+}
+
+async function captureVisionFrame() {
+    if (visionBusy || !cameraStream) return;
+    const video = el("cameraPreview");
+    if (!video.videoWidth || !video.videoHeight) return;
+    visionBusy = true;
+    try {
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.min(video.videoWidth, 640);
+        canvas.height = Math.round(canvas.width * video.videoHeight / video.videoWidth);
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.75));
+        if (!blob) return;
+        const form = new FormData();
+        form.append("frame", blob, "camera-frame.jpg");
+        const response = await fetch(API + "/api/interview/vision/frame", { method: "POST", body: form });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || "Camera analysis failed");
+        const observation = data.vision || {};
+        visionObservations.push({ face_detected: !!observation.face_detected, head_orientation: observation.head_orientation || "unknown" });
+        const detected = visionObservations.filter(x => x.face_detected).length;
+        const orientations = visionObservations.filter(x => x.face_detected).map(x => x.head_orientation);
+        el("visionResult").textContent = `Frames checked: ${visionObservations.length} · Face visible: ${detected} · Latest orientation: ${observation.head_orientation || "unknown"}. These are approximate visual observations, not gaze or psychological assessments.`;
+    } catch (e) {
+        el("visionResult").textContent = "Camera observation unavailable: " + e.message;
+    } finally {
+        visionBusy = false;
+    }
+}
+
+const HISTORY_KEY = "careerpilot_interview_history_v1";
+
+function getInterviewHistory() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+        return Array.isArray(saved) ? saved : [];
+    } catch (_) {
+        return [];
+    }
+}
+
+function saveInterviewHistory(item) {
+    const history = getInterviewHistory();
+    history.unshift(item);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 20)));
+    renderHistory();
+}
+
+function renderHistory() {
+    const host = el("historyList");
+    if (!host) return;
+    const history = getInterviewHistory();
+    if (!history.length) {
+        host.innerHTML = '<p class="muted">No interview sessions saved yet. Complete a voice evaluation to start tracking practice.</p>';
+        return;
+    }
+    host.innerHTML = history.map(item => `
+        <div class="card">
+            <strong>${escapeHtml(item.role || "Interview")}</strong>
+            <div class="muted">${escapeHtml(new Date(item.date).toLocaleString())}</div>
+            <p>${escapeHtml(item.question || "")}</p>
+            <div class="grid">
+                <div class="metric">Answer score <b>${item.overall_score == null ? "N/A" : escapeHtml(item.overall_score + "/100")}</b></div>
+                <div class="metric">Speaking rate <b>${item.speaking_rate_wpm == null ? "N/A" : escapeHtml(item.speaking_rate_wpm + " WPM")}</b></div>
+                <div class="metric">Filler words <b>${item.filler_word_count == null ? "N/A" : escapeHtml(item.filler_word_count)}</b></div>
+            </div>
+        </div>`).join("");
+}
+
+function clearHistory() {
+    if (!confirm("Clear CareerPilot interview history stored in this browser?")) return;
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+}
+
+async function checkBackend() {
+    try {
+        const response = await fetch(API + "/api/health");
+        if (!response.ok) throw new Error("Backend health check failed");
+        return await response.json();
+    } catch (errorObject) {
+        console.error("CareerPilot backend is not reachable:", errorObject);
+        return null;
+    }
+}
+
+renderHistory();
+checkBackend();
+window.addEventListener("beforeunload", stopCameraObservation);
+
+
+/* =====================================================
+   VIRTUAL INTERVIEW — automatic turn-based voice mode
+===================================================== */
+let virtualActive = false;
+let virtualStream = null;
+let virtualRecorder = null;
+let virtualChunks = [];
+let virtualAudioContext = null;
+let virtualAnalyser = null;
+let virtualVadFrame = null;
+let virtualSpeechSeen = false;
+let virtualLastVoiceAt = 0;
+let virtualTurn = 0;
+let virtualCurrentQuestion = '';
+let virtualLastAnswer = '';
+let virtualProcessing = false;
+let virtualSilenceStarted = 0;
+let virtualRecognition = null;
+let virtualRecognitionStopping = false;
+let virtualRecognitionStopResolve = null;
+let virtualSpeechTranscript = '';
+
+function virtualStatus(message, isError = false) {
+    const node = el('virtualStatus');
+    node.className = isError ? 'error' : 'loading';
+    node.textContent = message;
+}
+
+function virtualCameraToggleChanged() {
+    if (virtualActive) {
+        virtualStatus('End the current interview before changing camera settings.');
+        el('virtualCameraToggle').checked = !!(virtualStream && virtualStream.getVideoTracks().length);
+    }
+}
+
+async function startVirtualInterview() {
+    if (virtualActive) return;
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+        virtualStatus('This browser does not support microphone recording. Please use a current browser over localhost or HTTPS.', true);
+        return;
+    }
+    const role = el('virtualRole').value.trim() || 'General interview';
+    virtualStatus('Requesting microphone' + (el('virtualCameraToggle').checked ? ' and camera' : '') + ' permission…');
+    try {
+        virtualStream = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+            video: el('virtualCameraToggle').checked ? { facingMode: 'user' } : false
+        });
+        if (el('virtualCameraToggle').checked) {
+            el('virtualVideo').srcObject = virtualStream;
+            el('virtualVideo').hidden = false;
+            el('virtualCameraPlaceholder').hidden = true;
+            el('virtualStage').classList.remove('no-camera');
+        }
+        virtualActive = true;
+        virtualTurn = 0;
+        virtualCurrentQuestion = '';
+        virtualLastAnswer = '';
+        el('virtualConversation').innerHTML = '';
+        el('virtualFeedback').innerHTML = '';
+        el('virtualStartButton').disabled = true;
+        el('virtualStopButton').disabled = false;
+        el('virtualCameraToggle').disabled = true;
+        const audioTrack = virtualStream.getAudioTracks()[0];
+        virtualAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = virtualAudioContext.createMediaStreamSource(new MediaStream([audioTrack]));
+        virtualAnalyser = virtualAudioContext.createAnalyser();
+        virtualAnalyser.fftSize = 2048;
+        source.connect(virtualAnalyser);
+        virtualStatus('Preparing your interview questions…');
+        const form = new FormData();
+        form.append('role', role);
+        form.append('interview_type', el('virtualType').value);
+        const response = await fetch(API + '/api/interview/questions', { method: 'POST', body: form });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Could not create interview questions.');
+        const first = (data.questions || [])[0]?.question;
+        if (!first) throw new Error('The interview planner returned no questions.');
+        await virtualAskQuestion(first, 'Interviewer');
+    } catch (e) {
+        virtualStatus(e.message || 'Could not start the virtual interview.', true);
+        cleanupVirtualInterview();
+        virtualActive = false;
+        el('virtualStartButton').disabled = false;
+        el('virtualStopButton').disabled = true;
+        el('virtualCameraToggle').disabled = false;
+    }
+}
+
+async function virtualAskQuestion(question, speaker = 'Interviewer') {
+    if (!virtualActive) return;
+    virtualCurrentQuestion = question;
+    el('virtualQuestion').textContent = question;
+    virtualTurn += 1;
+    el('virtualTurnCount').textContent = 'Turn ' + virtualTurn;
+    virtualAddTurn(speaker, question);
+    virtualStatus('Asking question aloud…');
+    el('virtualListeningPill').textContent = '● Speaking question';
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        await new Promise(resolve => {
+            const utterance = new SpeechSynthesisUtterance(question);
+            utterance.rate = 0.96;
+            utterance.onend = resolve;
+            utterance.onerror = resolve;
+            window.speechSynthesis.speak(utterance);
+            // Avoid leaving the session stuck if the browser never fires onend.
+            setTimeout(resolve, Math.max(5000, question.length * 100));
+        });
+    }
+    if (virtualActive) startVirtualAutoRecording();
+}
+
+function virtualAddTurn(who, text, meta = '') {
+    const host = el('virtualConversation');
+    const empty = host.querySelector('.muted');
+    if (empty && host.children.length === 1 && !host.querySelector('.virtual-turn strong')) host.innerHTML = '';
+    const item = document.createElement('div');
+    item.className = 'virtual-turn';
+    const title = document.createElement('strong'); title.textContent = who;
+    const body = document.createElement('div'); body.textContent = text;
+    item.append(title, body);
+    if (meta) { const small = document.createElement('div'); small.className = 'small'; small.textContent = meta; item.appendChild(small); }
+    host.appendChild(item);
+    host.scrollTop = host.scrollHeight;
+}
+
+
+// Use browser speech recognition for a low-latency transcript when supported.
+// The audio recording is still retained for measurable delivery analysis and fallback transcription.
+function virtualStartRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    virtualSpeechTranscript = '';
+    virtualRecognition = null;
+    virtualRecognitionStopping = false;
+    if (!SpeechRecognition) return false;
+
+    try {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-IN';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = event => {
+            let newlyFinalized = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const result = event.results[i];
+                if (result.isFinal && result[0]?.transcript) {
+                    newlyFinalized += result[0].transcript + ' ';
+                }
+            }
+            if (newlyFinalized.trim()) {
+                virtualSpeechTranscript = (virtualSpeechTranscript + ' ' + newlyFinalized).trim();
+            }
+        };
+
+        recognition.onerror = event => {
+            // no-speech and aborted are normal during turn boundaries; audio fallback remains available.
+            if (!['no-speech', 'aborted'].includes(event.error)) {
+                console.warn('Browser speech recognition unavailable:', event.error);
+            }
+        };
+
+        recognition.onend = () => {
+            if (virtualRecognitionStopping) {
+                virtualRecognitionStopping = false;
+                const resolve = virtualRecognitionStopResolve;
+                virtualRecognitionStopResolve = null;
+                if (resolve) resolve();
+                return;
+            }
+            // Chrome may end a recognition segment automatically; restart while this answer is recording.
+            if (virtualActive && !virtualProcessing && virtualRecorder?.state === 'recording') {
+                setTimeout(() => {
+                    if (virtualActive && !virtualProcessing && virtualRecorder?.state === 'recording') {
+                        try { recognition.start(); } catch (_) {}
+                    }
+                }, 250);
+            }
+        };
+
+        virtualRecognition = recognition;
+        recognition.start();
+        return true;
+    } catch (error) {
+        console.warn('Could not start browser speech recognition:', error);
+        virtualRecognition = null;
+        return false;
+    }
+}
+
+function virtualStopRecognition() {
+    if (!virtualRecognition) return Promise.resolve();
+    return new Promise(resolve => {
+        let settled = false;
+        const finish = () => {
+            if (settled) return;
+            settled = true;
+            virtualRecognitionStopping = false;
+            virtualRecognitionStopResolve = null;
+            resolve();
+        };
+        virtualRecognitionStopping = true;
+        virtualRecognitionStopResolve = finish;
+        try { virtualRecognition.stop(); } catch (_) { finish(); }
+        // Some browser implementations do not emit onend reliably.
+        setTimeout(finish, 800);
+    });
+}
+
+function startVirtualAutoRecording() {
+    if (!virtualActive || !virtualStream || virtualProcessing) return;
+    try {
+        virtualChunks = [];
+        const liveTranscriptAvailable = virtualStartRecognition();
+        const options = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? { mimeType: 'audio/webm;codecs=opus' } : undefined;
+        virtualRecorder = new MediaRecorder(new MediaStream(virtualStream.getAudioTracks()), options);
+        virtualSpeechSeen = false;
+        virtualLastVoiceAt = 0;
+        virtualSilenceStarted = performance.now();
+        virtualRecorder.ondataavailable = event => { if (event.data?.size) virtualChunks.push(event.data); };
+        virtualRecorder.onstop = virtualProcessAnswer;
+        virtualRecorder.start(200);
+        el('virtualListeningPill').className = 'virtual-pill live';
+        el('virtualListeningPill').textContent = '● Listening automatically';
+        virtualStatus(liveTranscriptAvailable
+            ? 'Listening with live transcription… answer naturally. Stops after about 1.8 seconds of silence.'
+            : 'Listening… answer naturally. Audio will be transcribed by the backend after you finish.');
+        virtualMonitorVoice();
+    } catch (e) {
+        virtualStatus('Could not start automatic recording: ' + e.message, true);
+        stopVirtualInterview();
+    }
+}
+
+function virtualMonitorVoice() {
+    if (!virtualActive || !virtualRecorder || virtualRecorder.state !== 'recording' || !virtualAnalyser) return;
+    const values = new Uint8Array(virtualAnalyser.fftSize);
+    virtualAnalyser.getByteTimeDomainData(values);
+    let sum = 0;
+    for (let i = 0; i < values.length; i++) { const v = (values[i] - 128) / 128; sum += v * v; }
+    const rms = Math.sqrt(sum / values.length);
+    const now = performance.now();
+    if (rms > 0.022) { virtualSpeechSeen = true; virtualLastVoiceAt = now; }
+    if (virtualSpeechSeen && now - virtualLastVoiceAt > 1800) {
+        virtualVadFrame = null;
+        el('virtualListeningPill').className = 'virtual-pill';
+        el('virtualListeningPill').textContent = '● Answer captured';
+        virtualStatus('Silence detected. Processing your answer…');
+        virtualRecorder.stop();
+        return;
+    }
+    // If the user never speaks, keep listening and tell them to check the microphone.
+    if (!virtualSpeechSeen && now - virtualSilenceStarted > 25000) {
+        virtualStatus('Still listening. Check microphone permission, then say your answer; you can end the session at any time.');
+        virtualSilenceStarted = now;
+    }
+    virtualVadFrame = requestAnimationFrame(virtualMonitorVoice);
+}
+
+async function virtualProcessAnswer() {
+    if (!virtualActive) return;
+    if (!virtualSpeechSeen || !virtualChunks.length) {
+        await virtualStopRecognition();
+        virtualStatus('I did not detect speech. Listening again…');
+        startVirtualAutoRecording();
+        return;
+    }
+
+    virtualProcessing = true;
+    try {
+        // Let the browser deliver its final recognition result before using the transcript.
+        await virtualStopRecognition();
+
+        const mime = virtualRecorder?.mimeType || 'audio/webm';
+        const blob = new Blob(virtualChunks, { type: mime });
+        const ext = mime.includes('ogg') ? 'ogg' : 'webm';
+        const transcript = (virtualSpeechTranscript || '').trim();
+
+        const form = new FormData();
+        form.append('audio', blob, 'virtual-answer.' + ext);
+        form.append('question', virtualCurrentQuestion);
+        form.append('role', el('virtualRole').value.trim() || 'General interview');
+        if (transcript) form.append('transcript', transcript);
+
+        // Follow-up depends on the transcript, not the score, so start it concurrently.
+        const followForm = new FormData();
+        followForm.append('role', el('virtualRole').value.trim() || 'General interview');
+        followForm.append('question', virtualCurrentQuestion);
+        if (transcript) followForm.append('answer', transcript);
+
+        virtualStatus(transcript
+            ? 'Live transcript ready. Evaluating your answer…'
+            : 'Transcribing your answer and preparing feedback…');
+
+        const followPromise = transcript
+            ? fetch(API + '/api/interview/followup', { method: 'POST', body: followForm })
+                .then(async response => ({ response, data: await response.json() }))
+                .catch(() => null)
+            : null;
+
+        const response = await fetch(API + '/api/interview/audio/evaluate', { method: 'POST', body: form });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Answer evaluation failed.');
+        if (!virtualActive) return;
+
+        const finalTranscript = data.transcript || transcript || '(No transcript returned)';
+        const score = data.evaluation?.overall_score;
+        virtualLastAnswer = finalTranscript;
+        virtualAddTurn('You', finalTranscript, score == null ? '' : 'Answer score: ' + score + '/100');
+
+        const ev = data.evaluation || {};
+        const improvements = (ev.improvements || []).slice(0, 3).map(escapeHtml).join('</li><li>');
+        el('virtualFeedback').innerHTML = `<div class="card"><h3>Answer feedback</h3><div class="metric">Overall score <b>${ev.overall_score ?? 'N/A'}/100</b></div><p><strong>Strengths</strong></p>${list(ev.strengths || [])}<p><strong>Try improving</strong></p>${improvements ? '<ul class="list"><li>' + improvements + '</li></ul>' : '<p>No specific improvement notes returned.</p>'}</div>`;
+
+        let nextQuestion = 'Could you give a specific example that illustrates your answer?';
+        // If browser transcription was unavailable, ask the follow-up after backend transcription.
+        let followResult = await followPromise;
+        if (!followResult) {
+            const followFormFallback = new FormData();
+            followFormFallback.append('role', el('virtualRole').value.trim() || 'General interview');
+            followFormFallback.append('question', virtualCurrentQuestion);
+            followFormFallback.append('answer', finalTranscript);
+            try {
+                const followResponse = await fetch(API + '/api/interview/followup', { method: 'POST', body: followFormFallback });
+                followResult = { response: followResponse, data: await followResponse.json() };
+            } catch (_) {}
+        }
+        if (followResult?.response?.ok && followResult.data?.follow_up_question) {
+            nextQuestion = followResult.data.follow_up_question;
+        }
+
+        virtualProcessing = false;
+        if (virtualActive) await virtualAskQuestion(nextQuestion, 'Interviewer · follow-up');
+    } catch (e) {
+        virtualStatus('Could not process this answer: ' + e.message + '. Listening again in a moment.', true);
+        if (virtualActive) setTimeout(() => { if (virtualActive) startVirtualAutoRecording(); }, 1800);
+    } finally {
+        virtualProcessing = false;
+    }
+}
+
+function stopVirtualInterview() {
+    virtualActive = false;
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    virtualStopRecognition();
+    if (virtualVadFrame) cancelAnimationFrame(virtualVadFrame);
+    virtualVadFrame = null;
+    if (virtualRecorder && virtualRecorder.state === 'recording') {
+        virtualRecorder.onstop = null;
+        try { virtualRecorder.stop(); } catch (_) {}
+    }
+    cleanupVirtualInterview();
+    el('virtualStartButton').disabled = false;
+    el('virtualStopButton').disabled = true;
+    el('virtualCameraToggle').disabled = false;
+    el('virtualListeningPill').className = 'virtual-pill';
+    el('virtualListeningPill').textContent = '● Interview ended';
+    virtualStatus('Interview ended. Your conversation remains visible until you leave or refresh this page.');
+}
+
+function cleanupVirtualInterview() {
+    if (virtualVadFrame) cancelAnimationFrame(virtualVadFrame);
+    virtualVadFrame = null;
+    if (virtualStream) virtualStream.getTracks().forEach(track => track.stop());
+    virtualStream = null;
+    if (virtualAudioContext && virtualAudioContext.state !== 'closed') virtualAudioContext.close().catch(() => {});
+    virtualAudioContext = null;
+    virtualAnalyser = null;
+    const video = el('virtualVideo');
+    if (video) { video.srcObject = null; video.hidden = true; }
+    if (el('virtualCameraPlaceholder')) el('virtualCameraPlaceholder').hidden = false;
+    if (el('virtualStage')) el('virtualStage').classList.add('no-camera');
+    virtualRecorder = null;
+    virtualRecognition = null;
+    virtualSpeechTranscript = '';
+    virtualProcessing = false;
+}
+
+
+</script>
+
+</body>
+</html>
